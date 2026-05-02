@@ -89,7 +89,7 @@ class LivePhotoHook : BaseHook {
                 try {
                     XposedHelpers.findClass("android.app.Fragment", classLoader)
                 } catch (_: Throwable) { null }
-            } ?: return
+            } ?: return@safeHook
 
             XposedBridge.hookAllMethods(fragmentClass, "onResume", object : XC_MethodHook() {
                 override fun afterHookedMethod(param: MethodHookParam) {
