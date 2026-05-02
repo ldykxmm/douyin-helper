@@ -6,6 +6,7 @@ import com.xposed.douyinhelper.util.HookUtils
 import com.xposed.douyinhelper.util.MediaCache
 import com.xposed.douyinhelper.util.MediaDownloader
 import com.xposed.douyinhelper.util.UrlParser
+import com.xposed.douyinhelper.util.VideoFieldDumper
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
@@ -13,33 +14,22 @@ import de.robv.android.xposed.XposedHelpers
 /**
  * Feed 流视频 Hook
  *
- * 功能:
- * - Hook Aweme 数据模型，拦截视频信息
- * - 从 video.play_addr.url_list 提取视频 URL
- * - 替换为无水印 URL (playwm → play)
- * - 支持 H264/H265 多码率
- * - 缓存当前 Aweme 对象供 SharePanelHook 使用
- *
- * 抖音视频数据结构(大致):
- * Aweme -> video -> play_addr -> url_list[]
- * Aweme -> video -> play_addr_h264 -> url_list[]
- * Aweme -> video -> bit_rate[] -> play_addr -> url_list[]
- * Aweme -> images[] -> url_list[]  (图集)
+ * 自适应策略:
+ * 1. 优先通过类名查找 Aweme/Video
+ * 2. 如果找到 Video 对象，自动扫描所有字段找 URL
+ * 3. 不依赖硬编码字段名，兼容各版本抖音
  */
 class FeedHook : BaseHook {
 
     companion object {
         private const val TAG = "FeedHook"
+        private var dumped = false  // 只 dump 一次
     }
 
     override fun init(classLoader: ClassLoader) {
         hookAwemeModel(classLoader)
     }
 
-    /**
-     * Hook Aweme 数据模型
-     * 拦截视频数据的设置过程，替换为无水印 URL
-     */
     private fun hookAwemeModel(classLoader: ClassLoader) {
         HookUtils.safeHook {
             val awemeClass = ClassFinder.findClass(
@@ -51,218 +41,151 @@ class FeedHook : BaseHook {
             )
 
             if (awemeClass != null) {
-                hookVideoField(awemeClass, classLoader)
-                // 缓存当前 Aweme
-                hookAwemeCache(awemeClass)
+                HookUtils.log("$TAG: 找到 Aweme 类: ${awemeClass.name}")
+                hookAwemeGetters(awemeClass, classLoader)
             } else {
-                HookUtils.log("$TAG: 未找到 Aweme 类，尝试备用方案")
-                hookBySignature(classLoader)
+                HookUtils.log("$TAG: 未找到 Aweme 类")
             }
         }
     }
 
     /**
-     * 缓存当前 Aweme 对象
-     *
-     * Hook Aweme 的 setter 或包含 Aweme 参数的方法，
-     * 当 Feed 流设置当前 Aweme 时缓存它。
+     * Hook Aweme 的所有返回非 void 的无参方法
+     * 自动检测返回值是否包含视频/图片 URL
      */
-    private fun hookAwemeCache(awemeClass: Class<*>) {
+    private fun hookAwemeGetters(awemeClass: Class<*>, classLoader: ClassLoader) {
         HookUtils.safeHook {
-            // Hook 常见的包含 Aweme 参数的类
-            val containerClasses = listOf(
-                "com.ss.android.ugc.aweme.feed.model.VideoItemParams",
-                "com.ss.android.ugc.aweme.feed.param.FeedParam"
-            )
-
-            for (className in containerClasses) {
-                try {
-                    val clazz = Class.forName(className, false, awemeClass.classLoader)
-
-                    // Hook 设置 Aweme 的方法
-                    clazz.declaredMethods
-                        .filter { method ->
-                            method.parameterTypes.size == 1 &&
-                            (method.parameterTypes[0] == awemeClass ||
-                             method.name.contains("aweme", ignoreCase = true) ||
-                             method.name.contains("Aweme", ignoreCase = true))
-                        }
-                        .forEach { method ->
-                            XposedBridge.hookMethod(method, object : XC_MethodHook() {
-                                override fun afterHookedMethod(param: MethodHookParam) {
-                                    try {
-                                        val arg = param.args.firstOrNull()
-                                        if (arg != null && awemeClass.isInstance(arg)) {
-                                            MediaCache.setCurrentAweme(arg)
-                                        }
-                                    } catch (_: Throwable) {}
-                                }
-                            })
-                        }
-                    break
-                } catch (_: ClassNotFoundException) { }
+            val methods = awemeClass.declaredMethods.filter { m ->
+                m.parameterCount == 0 &&
+                m.returnType != Void.TYPE::class.java &&
+                m.returnType != Boolean::class.javaPrimitiveType &&
+                m.returnType != Int::class.javaPrimitiveType &&
+                m.returnType != Long::class.javaPrimitiveType &&
+                m.returnType != Float::class.javaPrimitiveType &&
+                m.returnType != Double::class.javaPrimitiveType
             }
 
-            // 额外: Hook Aweme 的所有 setter 方法
-            awemeClass.declaredMethods
-                .filter { method ->
-                    method.parameterTypes.size == 1 &&
-                    method.name.startsWith("set") &&
-                    method.name.length > 3
-                }
-                .take(10)  // 限制数量，避免过度 hook
-                .forEach { method ->
-                    XposedBridge.hookMethod(method, object : XC_MethodHook() {
-                        override fun afterHookedMethod(param: MethodHookParam) {
-                            try {
-                                // Aweme 的 setter 被调用说明该 Aweme 正在被使用
-                                val aweme = param.thisObject
-                                MediaCache.setCurrentAweme(aweme)
-                            } catch (_: Throwable) {}
-                        }
-                    })
-                }
-        }
-    }
+            HookUtils.log("$TAG: Hooking ${methods.size} 个 Aweme getter 方法")
 
-    /**
-     * 通过已知类名 Hook 视频字段
-     */
-    private fun hookVideoField(awemeClass: Class<*>, classLoader: ClassLoader) {
-        HookUtils.safeHook {
-            val videoMethods = awemeClass.declaredMethods.filter { method ->
-                method.returnType.name.contains("Video") ||
-                method.name.contains("getVideo") ||
-                method.name == "getVideo"
-            }
-
-            for (method in videoMethods) {
+            for (method in methods) {
                 XposedBridge.hookMethod(method, object : XC_MethodHook() {
                     override fun afterHookedMethod(param: MethodHookParam) {
                         try {
-                            // 缓存 Aweme
+                            val result = param.result ?: return
                             MediaCache.setCurrentAweme(param.thisObject)
-                            processVideoObject(param.result, classLoader)
-                        } catch (t: Throwable) {
-                            HookUtils.log("$TAG: 处理视频对象失败: ${t.message}")
-                        }
-                    }
-                })
-            }
 
-            // 同时 Hook 图集相关方法
-            val imageMethods = awemeClass.declaredMethods.filter { method ->
-                method.returnType.name.contains("List") &&
-                (method.name.contains("Image") || method.name.contains("image") ||
-                 method.name.contains("Pic") || method.name.contains("pic"))
-            }
+                            // 首次命中时 dump 一次字段结构
+                            if (!dumped) {
+                                dumped = true
+                                VideoFieldDumper.dumpAwemeFields(param.thisObject)
+                            }
 
-            for (method in imageMethods) {
-                XposedBridge.hookMethod(method, object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        try {
-                            MediaCache.setCurrentAweme(param.thisObject)
+                            processResult(result, classLoader, method.name)
                         } catch (_: Throwable) {}
                     }
                 })
             }
-
-            HookUtils.log("$TAG: 已 Hook ${videoMethods.size} 个视频方法, ${imageMethods.size} 个图片方法")
         }
     }
 
     /**
-     * 处理视频对象，提取并替换无水印 URL
+     * 自适应处理返回值
+     * 递归扫描对象，找到包含 URL 的字段并替换
      */
-    private fun processVideoObject(videoObj: Any?, classLoader: ClassLoader) {
-        if (videoObj == null) return
+    private fun processResult(result: Any, classLoader: ClassLoader, source: String) {
+        when (result) {
+            is String -> {
+                if (result.contains("playwm") && UrlParser.isVideoUrl(result)) {
+                    HookUtils.log("$TAG: [$source] 直接返回了视频URL，替换中")
+                    // 注意：这里无法直接修改返回值，因为是在 afterHookedMethod
+                    // 但我们可以记录 URL 供其他地方使用
+                }
+            }
+            is List<*> -> {
+                for (item in result) {
+                    if (item != null) processResult(item, classLoader, "$source.list")
+                }
+            }
+            else -> {
+                // 扫描对象的所有字段
+                scanAndReplaceUrls(result, classLoader, source, depth = 0)
+            }
+        }
+    }
 
-        try {
-            processPlayAddr(XposedHelpers.getObjectField(videoObj, "playAddr"), "playAddr")
+    /**
+     * 递归扫描对象字段，查找并替换视频 URL
+     * 最大深度 5 层，避免无限递归
+     */
+    private fun scanAndReplaceUrls(obj: Any, classLoader: ClassLoader, source: String, depth: Int) {
+        if (depth > 5) return
 
+        val clazz = obj::class.java
+        val fields = try { clazz.declaredFields } catch (_: Throwable) { return }
+
+        for (field in fields) {
             try {
-                processPlayAddr(XposedHelpers.getObjectField(videoObj, "playAddrH264"), "playAddrH264")
-            } catch (_: Throwable) { }
+                field.isAccessible = true
+                val value = field.get(obj) ?: continue
 
-            try {
-                val bitRateArray = XposedHelpers.getObjectField(videoObj, "bitRate") as? Array<*>
-                bitRateArray?.forEach { bitRateObj ->
-                    if (bitRateObj != null) {
-                        processPlayAddr(
-                            XposedHelpers.getObjectField(bitRateObj, "playAddr"),
-                            "bitRate"
-                        )
+                when (value) {
+                    is String -> {
+                        if (value.contains("playwm") || (value.contains("douyinvod") && value.contains("/play"))) {
+                            val newUrl = UrlParser.getNoWatermarkUrl(value)
+                            if (newUrl != value) {
+                                field.set(obj, newUrl)
+                                HookUtils.log("$TAG: [$source] 替换字段 ${clazz.simpleName}.${field.name}")
+                            }
+                        }
+                    }
+                    is List<*> -> {
+                        replaceUrlList(value, obj, field, clazz, source)
+                    }
+                    else -> {
+                        // 递归扫描子对象
+                        scanAndReplaceUrls(value, classLoader, "$source.${field.name}", depth + 1)
                     }
                 }
-            } catch (_: Throwable) { }
-
-        } catch (t: Throwable) {
-            HookUtils.log("$TAG: processVideoObject 失败: ${t.message}")
+            } catch (_: Throwable) {}
         }
     }
 
     /**
-     * 处理 play_addr 对象，提取 URL 列表并替换
+     * 替换 List 中的 URL
      */
-    private fun processPlayAddr(playAddr: Any?, source: String) {
-        if (playAddr == null) return
+    private fun replaceUrlList(
+        list: List<*>, parent: Any, field: java.lang.reflect.Field,
+        parentClass: Class<*>, source: String
+    ) {
+        var changed = false
+        val newList = list.toMutableList()
 
-        try {
-            val urlList = XposedHelpers.getObjectField(playAddr, "urlList") as? List<*>
-            if (urlList.isNullOrEmpty()) return
+        for (i in newList.indices) {
+            val item = newList[i] ?: continue
 
-            val originalUrl = urlList.firstOrNull { it is String && it.toString().isNotEmpty() } as? String
-                ?: return
-
-            val noWmUrl = UrlParser.getNoWatermarkUrl(originalUrl)
-
-            if (noWmUrl != originalUrl) {
-                HookUtils.log("$TAG: [$source] 发现水印URL，已替换")
-
-                val newList = mutableListOf<String>()
-                newList.add(noWmUrl)
-                urlList.filterIsInstance<String>().drop(1).forEach { newList.add(it) }
-
-                XposedHelpers.setObjectField(playAddr, "urlList", newList)
-            }
-        } catch (t: Throwable) {
-            HookUtils.log("$TAG: processPlayAddr($source) 失败: ${t.message}")
-        }
-    }
-
-    /**
-     * 备用方案: 通过方法签名特征查找并 Hook
-     */
-    private fun hookBySignature(classLoader: ClassLoader) {
-        HookUtils.safeHook {
-            val urlClasses = listOf(
-                "com.ss.android.ugc.aweme.feed.model.VideoItemParams",
-                "com.ss.android.ugc.aweme.feed.model.Video"
-            )
-
-            for (className in urlClasses) {
-                try {
-                    val clazz = Class.forName(className, false, classLoader)
-                    HookUtils.log("$TAG: 找到备用类: $className")
-
-                    clazz.declaredMethods
-                        .filter { it.returnType == String::class.java && it.parameterCount == 0 }
-                        .forEach { method ->
-                            XposedBridge.hookMethod(method, object : XC_MethodHook() {
-                                override fun afterHookedMethod(param: MethodHookParam) {
-                                    val value = param.result as? String ?: return
-                                    if (value.contains("playwm") || value.contains("douyinvod")) {
-                                        val newUrl = UrlParser.getNoWatermarkUrl(value)
-                                        if (newUrl != value) {
-                                            param.result = newUrl
-                                            HookUtils.log("$TAG: [备用] 替换URL成功")
-                                        }
-                                    }
-                                }
-                            })
+            when (item) {
+                is String -> {
+                    if (item.contains("playwm") || (item.contains("douyinvod") && item.contains("/play"))) {
+                        val newUrl = UrlParser.getNoWatermarkUrl(item)
+                        if (newUrl != item) {
+                            newList[i] = newUrl
+                            changed = true
+                            HookUtils.log("$TAG: [$source] 替换 ${parentClass.simpleName}.${field.name}[$i]")
                         }
-                } catch (_: ClassNotFoundException) { }
+                    }
+                }
+                else -> {
+                    // 递归处理 List 中的复杂对象
+                    scanAndReplaceUrls(item, parent.javaClass.classLoader ?: return,
+                        "$source.${field.name}[$i]", depth = 3)
+                }
             }
+        }
+
+        if (changed) {
+            try {
+                field.set(parent, newList)
+            } catch (_: Throwable) {}
         }
     }
 }

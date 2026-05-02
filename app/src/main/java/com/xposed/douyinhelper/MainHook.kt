@@ -26,7 +26,7 @@ class MainHook : IXposedHookLoadPackage {
     companion object {
         const val LOG_TAG = "Dou+"
         const val TARGET_PACKAGE = "com.ss.android.ugc.aweme"
-        const val MODULE_VERSION = "1.1.0"
+        const val MODULE_VERSION = "1.2.0"
     }
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
