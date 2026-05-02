@@ -324,7 +324,7 @@ class SharePanelHook : BaseHook {
                                     is String -> if (item.startsWith("http") && UrlParser.isImageUrl(item)) urls.add(item)
                                     else -> {
                                         // Image 对象，递归找 urlList
-                                        val nested = findImageUrls(item, depth + 1)
+                                        val nested = if (item != null) findImageUrls(item, depth + 1) else emptyList()
                                         urls.addAll(nested)
                                     }
                                 }
