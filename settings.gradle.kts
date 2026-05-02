@@ -11,7 +11,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // Xposed API 不在 Maven Central 上，需要专用仓库
+        // Xposed API 不在 Maven Central，需要专用仓库
         maven("https://api.xposed.info/")
     }
 }
