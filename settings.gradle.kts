@@ -16,5 +16,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DouyinHelper"
+rootProject.name = "Dou+"
 include(":app")

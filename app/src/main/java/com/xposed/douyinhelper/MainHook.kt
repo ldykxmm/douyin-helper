@@ -14,17 +14,17 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 /**
- * DouyinHelper - Xposed 模块入口
+ * Dou+ - Xposed 模块入口
  *
  * 作用域: com.ss.android.ugc.aweme (抖音)
- * 功能: 无水印保存视频、图集、实况照片、评论区媒体
+ * 功能: 无水印保存视频、图集、实况照片、评论区媒体，分享面板一键保存
  *
  * 兼容: LSPosed 2.0.x (API 101) / LSPosed 1.x (API 93+)
  */
 class MainHook : IXposedHookLoadPackage {
 
     companion object {
-        const val LOG_TAG = "DouyinHelper"
+        const val LOG_TAG = "Dou+"
         const val TARGET_PACKAGE = "com.ss.android.ugc.aweme"
         const val MODULE_VERSION = "1.1.0"
     }
@@ -32,7 +32,7 @@ class MainHook : IXposedHookLoadPackage {
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         if (lpparam.packageName != TARGET_PACKAGE) return
 
-        HookUtils.log("========== DouyinHelper v$MODULE_VERSION ==========")
+        HookUtils.log("========== Dou+ v$MODULE_VERSION ==========")
         HookUtils.log("模块加载中... 包名: ${lpparam.packageName}")
         HookUtils.log("进程名: ${lpparam.processName}")
         HookUtils.log("类加载器: ${lpparam.classLoader::class.java.name}")

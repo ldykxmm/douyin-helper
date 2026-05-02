@@ -5,7 +5,7 @@ import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
 
 /**
- * DouyinHelper 设置页面
+ * Dou+ 设置页面
  *
  * 使用传统 PreferenceActivity + PreferenceFragment 实现。
  * 用户可通过 LSPosed 管理器或模块自带入口打开此页面。
@@ -37,7 +37,7 @@ class SettingsActivity : PreferenceActivity() {
             addPreferencesFromResource(com.xposed.douyinhelper.R.xml.prefs)
 
             // 初始化设置管理
-            DouyinHelperSettings.init(activity)
+            DouSettings.init(activity)
 
             // 绑定偏好变更监听
             bindPreferenceListeners()
@@ -45,46 +45,46 @@ class SettingsActivity : PreferenceActivity() {
 
         /**
          * 绑定偏好变更监听
-         * 用户修改设置时实时写入 DouyinHelperSettings
+         * 用户修改设置时实时写入 Dou+Settings
          */
         private fun bindPreferenceListeners() {
             findPreference("auto_save_video")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setAutoSaveVideo(newValue as Boolean)
+                DouSettings.setAutoSaveVideo(newValue as Boolean)
                 true
             }
 
             findPreference("auto_save_images")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setAutoSaveImages(newValue as Boolean)
+                DouSettings.setAutoSaveImages(newValue as Boolean)
                 true
             }
 
             findPreference("auto_save_live_photo")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setAutoSaveLivePhoto(newValue as Boolean)
+                DouSettings.setAutoSaveLivePhoto(newValue as Boolean)
                 true
             }
 
             findPreference("save_comment_media")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setSaveCommentMedia(newValue as Boolean)
+                DouSettings.setSaveCommentMedia(newValue as Boolean)
                 true
             }
 
             findPreference("save_directory")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setSaveDirectory(newValue as String)
+                DouSettings.setSaveDirectory(newValue as String)
                 true
             }
 
             findPreference("download_quality")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setDownloadQuality(newValue as String)
+                DouSettings.setDownloadQuality(newValue as String)
                 true
             }
 
             findPreference("show_toast")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setShowToast(newValue as Boolean)
+                DouSettings.setShowToast(newValue as Boolean)
                 true
             }
 
             findPreference("show_notification")?.setOnPreferenceChangeListener { _, newValue ->
-                DouyinHelperSettings.setShowNotification(newValue as Boolean)
+                DouSettings.setShowNotification(newValue as Boolean)
                 true
             }
         }

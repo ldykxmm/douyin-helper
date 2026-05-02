@@ -158,9 +158,9 @@ object MediaDownloader {
         }
 
         val relativePath = when {
-            isVideo -> Environment.DIRECTORY_MOVIES + "/DouyinHelper"
-            isImage -> Environment.DIRECTORY_PICTURES + "/DouyinHelper"
-            else -> Environment.DIRECTORY_DOWNLOADS + "/DouyinHelper"
+            isVideo -> Environment.DIRECTORY_MOVIES + "/Dou+"
+            isImage -> Environment.DIRECTORY_PICTURES + "/Dou+"
+            else -> Environment.DIRECTORY_DOWNLOADS + "/Dou+"
         }
 
         val values = ContentValues().apply {

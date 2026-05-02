@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 
 /**
- * DouyinHelper 设置管理
+ * Dou+ 设置管理
  *
  * 使用 SharedPreferences 存储模块配置。
  * 所有 Hook 模块通过此类读取用户偏好。
  */
-object DouyinHelperSettings {
+object DouSettings {
 
     private const val PREFS_NAME = "douyin_helper_settings"
 
@@ -28,7 +28,7 @@ object DouyinHelperSettings {
     private const val DEFAULT_AUTO_SAVE_IMAGES = true
     private const val DEFAULT_AUTO_SAVE_LIVE_PHOTO = true
     private const val DEFAULT_SAVE_COMMENT_MEDIA = true
-    private const val DEFAULT_SAVE_DIRECTORY = "DouyinHelper"
+    private const val DEFAULT_SAVE_DIRECTORY = "Dou+"
     private const val DEFAULT_DOWNLOAD_QUALITY = "high"
     private const val DEFAULT_SHOW_TOAST = true
     private const val DEFAULT_SHOW_NOTIFICATION = true
@@ -52,7 +52,7 @@ object DouyinHelperSettings {
     }
 
     private fun getPrefs(): SharedPreferences {
-        return prefs ?: throw IllegalStateException("DouyinHelperSettings 尚未初始化")
+        return prefs ?: throw IllegalStateException("DouSettings 尚未初始化")
     }
 
     // ==================== 自动保存视频 ====================

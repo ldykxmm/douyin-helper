@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DouyinHelper</string>
-    <string name="xposed_description">抖音无水印保存助手 - 支持视频、图集、实况照片、评论区媒体的无水印保存</string>
+    <string name="app_name">Dou+</string>
+    <string name="xposed_description">抖音增强工具 - 无水印保存视频、图集、实况照片、评论区媒体，分享面板一键保存</string>
 
     <!-- 设置页面标题 -->
-    <string name="settings_title">DouyinHelper 设置</string>
+    <string name="settings_title">Dou+ 设置</string>
 
     <!-- 分类标题 -->
     <string name="category_auto_save">自动保存</string>
@@ -29,7 +29,7 @@
     <!-- 存储 -->
     <string name="pref_save_directory_title">保存目录</string>
     <string name="pref_save_directory_summary">文件保存的子目录名称</string>
-    <string name="pref_save_directory_default">DouyinHelper</string>
+    <string name="pref_save_directory_default">Dou+</string>
 
     <string name="pref_download_quality_title">下载质量</string>
     <string name="pref_download_quality_summary">选择下载视频的画质偏好</string>

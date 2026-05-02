@@ -22,7 +22,7 @@ object NotificationHelper {
 
     private const val CHANNEL_ID = "douyin_helper_download"
     private const val CHANNEL_NAME = "下载通知"
-    private const val CHANNEL_DESC = "DouyinHelper 下载进度和完成通知"
+    private const val CHANNEL_DESC = "Dou+ 下载进度和完成通知"
 
     /** 通知 ID 计数器 */
     private var notificationId = 1000
@@ -174,7 +174,7 @@ object NotificationHelper {
     }
 
     /**
-     * 取消所有 DouyinHelper 通知
+     * 取消所有 Dou+ 通知
      *
      * @param context Android Context
      */

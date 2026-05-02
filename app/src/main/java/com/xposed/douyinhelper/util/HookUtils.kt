@@ -17,7 +17,7 @@ import de.robv.android.xposed.XposedBridge
 object HookUtils {
 
     /** 统一日志 TAG */
-    private const val TAG = "DouyinHelper"
+    private const val TAG = "Dou+"
 
     /** 主线程 Handler，用于弹 Toast */
     private val mainHandler by lazy { Handler(Looper.getMainLooper()) }

@@ -1,9 +1,9 @@
 @echo off
 chcp 936 >nul 2>&1
-title DouyinHelper Push Tool
+title Dou+ Push Tool
 
 echo ========================================
-echo   DouyinHelper - Push to GitHub
+echo   Dou+ - Push to GitHub
 echo ========================================
 echo.
 
@@ -16,14 +16,14 @@ if %errorlevel% neq 0 (
 )
 
 if not exist "build.gradle.kts" (
-    echo [ERROR] Please run this script inside douyin-helper folder.
+    echo [ERROR] Please run this script inside dou+ folder.
     pause
     exit /b 1
 )
 
 set /p GITHUB_USER=GitHub username: 
-set /p REPO_NAME=Repo name (default: douyin-helper): 
-if "%REPO_NAME%"=="" set REPO_NAME=douyin-helper
+set /p REPO_NAME=Repo name (default: dou+): 
+if "%REPO_NAME%"=="" set REPO_NAME=dou+
 set /p TOKEN=Personal Access Token: 
 
 echo.
@@ -48,7 +48,7 @@ if not exist ".git" (
 echo.
 echo [2/4] Commit files...
 git add .
-git commit -m "init: DouyinHelper LSPosed module"
+git commit -m "init: Dou+ LSPosed module"
 
 echo.
 echo [3/4] Add remote...

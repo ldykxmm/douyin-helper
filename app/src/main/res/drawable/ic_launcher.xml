@@ -5,37 +5,28 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- 背景圆形 -->
+    <!-- 抖音音符主体 - 黑色底层 -->
     <path
-        android:fillColor="#FF1A1A2E"
-        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+        android:fillColor="#FF000000"
+        android:pathData="M47,26 L47,64 C47,71.5 41.5,77 34.5,77 C27.5,77 22,71.5 22,64 C22,56.5 27.5,51 34.5,51 C36.8,51 38.9,51.6 40.7,52.7 L40.7,26 Z" />
 
-    <!-- 下载箭头 -->
+    <!-- 音符顶部横杠 -->
     <path
-        android:fillColor="#FF00D4FF"
-        android:pathData="M54,30L54,60"
-        android:strokeWidth="4"
-        android:strokeColor="#FF00D4FF"
-        android:strokeLineCap="round" />
+        android:fillColor="#FF000000"
+        android:pathData="M47,26 L47,33 L68,33 L68,26 L68,22 C68,22 63,19 57.5,19 C52,19 47,26 47,26 Z" />
 
-    <path
-        android:fillColor="#FF00D4FF"
-        android:pathData="M42,50L54,62L66,50"
-        android:strokeWidth="4"
-        android:strokeColor="#FF00D4FF"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
-
-    <!-- 底部横线 (表示保存) -->
-    <path
-        android:pathData="M38,72L70,72"
-        android:strokeWidth="4"
-        android:strokeColor="#FF00D4FF"
-        android:strokeLineCap="round" />
-
-    <!-- 右上角抖音音符 (简化) -->
+    <!-- 红色偏移层 (抖音标志性效果) -->
     <path
         android:fillColor="#FFFE2C55"
-        android:pathData="M66,28 C66,28 68,22 72,22 C72,22 72,28 68,28 C64,28 66,34 66,34 Z" />
+        android:pathData="M49,28 L49,66 C49,73.5 43.5,79 36.5,79 C29.5,79 24,73.5 24,66 C24,58.5 29.5,53 36.5,53 C38.8,53 40.9,53.6 42.7,54.7 L42.7,28 Z"
+        android:translateX="2"
+        android:translateY="-1" />
+
+    <!-- 蓝色偏移层 (抖音标志性效果) -->
+    <path
+        android:fillColor="#FF00F2EA"
+        android:pathData="M45,24 L45,62 C45,69.5 39.5,75 32.5,75 C25.5,75 20,69.5 20,62 C20,54.5 25.5,49 32.5,49 C34.8,49 36.9,49.6 38.7,50.7 L38.7,24 Z"
+        android:translateX="-2"
+        android:translateY="1" />
 
 </vector>

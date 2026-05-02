@@ -35,11 +35,11 @@ jobs:
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: DouyinHelper-debug
+          name: Dou+-debug
           path: app/build/outputs/apk/debug/*.apk
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: DouyinHelper-release
+          name: Dou+-release
           path: app/build/outputs/apk/release/*.apk
