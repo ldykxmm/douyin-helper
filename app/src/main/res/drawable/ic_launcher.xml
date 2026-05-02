@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 背景圆形 -->
+    <path
+        android:fillColor="#FF1A1A2E"
+        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+
+    <!-- 下载箭头 -->
+    <path
+        android:fillColor="#FF00D4FF"
+        android:pathData="M54,30L54,60"
+        android:strokeWidth="4"
+        android:strokeColor="#FF00D4FF"
+        android:strokeLineCap="round" />
+
+    <path
+        android:fillColor="#FF00D4FF"
+        android:pathData="M42,50L54,62L66,50"
+        android:strokeWidth="4"
+        android:strokeColor="#FF00D4FF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 底部横线 (表示保存) -->
+    <path
+        android:pathData="M38,72L70,72"
+        android:strokeWidth="4"
+        android:strokeColor="#FF00D4FF"
+        android:strokeLineCap="round" />
+
+    <!-- 右上角抖音音符 (简化) -->
+    <path
+        android:fillColor="#FFFE2C55"
+        android:pathData="M66,28 C66,28 68,22 72,22 C72,22 72,28 68,28 C64,28 66,34 66,34 Z" />
+
+</vector>

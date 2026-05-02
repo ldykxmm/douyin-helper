@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 自适应图标背景色 -->
+    <color name="ic_launcher_background">#FF1A1A2E</color>
+
+    <!-- 主题色 -->
+    <color name="colorPrimary">#FF00D4FF</color>
+    <color name="colorPrimaryDark">#FF00A8CC</color>
+    <color name="colorAccent">#FFFE2C55</color>
+</resources>

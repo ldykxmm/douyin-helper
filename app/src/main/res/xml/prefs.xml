@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ==================== 自动保存 ==================== -->
+    <PreferenceCategory android:title="@string/category_auto_save">
+
+        <CheckBoxPreference
+            android:key="auto_save_video"
+            android:title="@string/pref_auto_save_video_title"
+            android:summary="@string/pref_auto_save_video_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="auto_save_images"
+            android:title="@string/pref_auto_save_images_title"
+            android:summary="@string/pref_auto_save_images_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="auto_save_live_photo"
+            android:title="@string/pref_auto_save_live_photo_title"
+            android:summary="@string/pref_auto_save_live_photo_summary"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <!-- ==================== 评论区 ==================== -->
+    <PreferenceCategory android:title="@string/category_comment">
+
+        <CheckBoxPreference
+            android:key="save_comment_media"
+            android:title="@string/pref_save_comment_media_title"
+            android:summary="@string/pref_save_comment_media_summary"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <!-- ==================== 存储 ==================== -->
+    <PreferenceCategory android:title="@string/category_storage">
+
+        <EditTextPreference
+            android:key="save_directory"
+            android:title="@string/pref_save_directory_title"
+            android:summary="@string/pref_save_directory_summary"
+            android:defaultValue="@string/pref_save_directory_default" />
+
+        <ListPreference
+            android:key="download_quality"
+            android:title="@string/pref_download_quality_title"
+            android:summary="@string/pref_download_quality_summary"
+            android:entries="@array/download_quality_entries"
+            android:entryValues="@array/download_quality_values"
+            android:defaultValue="high" />
+
+    </PreferenceCategory>
+
+    <!-- ==================== 界面 ==================== -->
+    <PreferenceCategory android:title="@string/category_ui">
+
+        <CheckBoxPreference
+            android:key="show_toast"
+            android:title="@string/pref_show_toast_title"
+            android:summary="@string/pref_show_toast_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="show_notification"
+            android:title="@string/pref_show_notification_title"
+            android:summary="@string/pref_show_notification_summary"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DouyinHelper</string>
+    <string name="xposed_description">抖音无水印保存助手 - 支持视频、图集、实况照片、评论区媒体的无水印保存</string>
+
+    <!-- 设置页面标题 -->
+    <string name="settings_title">DouyinHelper 设置</string>
+
+    <!-- 分类标题 -->
+    <string name="category_auto_save">自动保存</string>
+    <string name="category_comment">评论区</string>
+    <string name="category_storage">存储</string>
+    <string name="category_ui">界面</string>
+
+    <!-- 自动保存 -->
+    <string name="pref_auto_save_video_title">自动保存视频</string>
+    <string name="pref_auto_save_video_summary">浏览视频时自动保存无水印版本到相册</string>
+
+    <string name="pref_auto_save_images_title">自动保存图集</string>
+    <string name="pref_auto_save_images_summary">浏览图集时自动保存无水印图片</string>
+
+    <string name="pref_auto_save_live_photo_title">自动保存实况照片</string>
+    <string name="pref_auto_save_live_photo_summary">保存实况照片时同时保存图片和视频部分</string>
+
+    <!-- 评论区 -->
+    <string name="pref_save_comment_media_title">保存评论区媒体</string>
+    <string name="pref_save_comment_media_summary">自动保存评论区的图片和实况照片</string>
+
+    <!-- 存储 -->
+    <string name="pref_save_directory_title">保存目录</string>
+    <string name="pref_save_directory_summary">文件保存的子目录名称</string>
+    <string name="pref_save_directory_default">DouyinHelper</string>
+
+    <string name="pref_download_quality_title">下载质量</string>
+    <string name="pref_download_quality_summary">选择下载视频的画质偏好</string>
+
+    <!-- 界面 -->
+    <string name="pref_show_toast_title">显示提示</string>
+    <string name="pref_show_toast_summary">保存文件时显示 Toast 提示</string>
+
+    <string name="pref_show_notification_title">显示通知</string>
+    <string name="pref_show_notification_summary">下载进度和完成时显示通知</string>
+
+    <!-- 质量选项 -->
+    <string-array name="download_quality_entries">
+        <item>最高画质</item>
+        <item>中等画质</item>
+        <item>省流量</item>
+    </string-array>
+    <string-array name="download_quality_values">
+        <item>high</item>
+        <item>medium</item>
+        <item>low</item>
+    </string-array>
+</resources>
